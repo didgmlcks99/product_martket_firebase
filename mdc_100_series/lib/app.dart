@@ -12,27 +12,51 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'home.dart';
 import 'login.dart';
 
-// TODO: Convert ShrineApp to stateful widget (104)
-class ShrineApp extends StatelessWidget {
+class ShrineApp extends StatefulWidget {
   const ShrineApp({Key? key}) : super(key: key);
 
   @override
+  _ShrineAppState createState() => _ShrineAppState();
+}
+
+class _ShrineAppState extends State<ShrineApp>{
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Shrine',
-      // TODO: Change home: to a Backdrop with a HomePage frontLayer (104)
-      home: const HomePage(),
-      // TODO: Make currentCategory field take _currentCategory (104)
-      // TODO: Pass _currentCategory for frontLayer (104)
-      // TODO: Change backLayer field value to CategoryMenuPage (104)
-      initialRoute: '/login',
-      onGenerateRoute: _getRoute,
-      // TODO: Add a theme (103)
+    return FutureBuilder(
+      future: _initialization,
+      builder: (context, snapshot) {
+        // Check for errors
+        if (snapshot.hasError) {
+          return Container();
+        }
+
+        // Once complete, show your application
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MaterialApp(
+            title: 'Shrine',
+            theme: ThemeData(
+                brightness: Brightness.light,
+                appBarTheme: AppBarTheme(
+                  color: Colors.grey[500],
+                )
+            ),
+            home: const HomePage(),
+            initialRoute: '/login',
+            onGenerateRoute: _getRoute,
+          );
+        }
+
+        // Otherwise, show something whilst waiting for initialization to complete
+        return Container();
+      },
     );
   }
 
@@ -47,7 +71,5 @@ class ShrineApp extends StatelessWidget {
       fullscreenDialog: true,
     );
   }
-}
 
-// TODO: Build a Shrine Theme (103)
-// TODO: Build a Shrine Text Theme (103)
+}

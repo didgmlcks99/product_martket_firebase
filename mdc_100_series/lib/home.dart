@@ -14,14 +14,106 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shrine/profile.dart';
 
+import 'add.dart';
+import 'detail.dart';
 import 'model/products_repository.dart';
 import 'model/product.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
-  // TODO: Add a variable for Category (104)
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  String dropdownValue = 'ASC';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.person,
+            semanticLabel: 'profile',
+          ),
+          onPressed: () {
+            print('Profile button');
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfilePage(),
+              ),
+            );
+
+          },
+        ),
+        title: const Text('Main'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.add,
+              semanticLabel: 'add',
+            ),
+            onPressed: () {
+              print('Add button');
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddPage(),
+                ),
+              );
+
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: <Widget>[
+          DropdownButton<String>(
+            value: dropdownValue,
+            icon: const Icon(Icons.arrow_downward),
+            iconSize: 20,
+            elevation: 16,
+            style: const TextStyle(color: Colors.black),
+            underline: Container(
+              height: 1,
+              color: Colors.grey,
+            ),
+            onChanged: (String? newValue) {
+              setState(() {
+                dropdownValue = newValue!;
+              });
+            },
+            items: <String>['ASC', 'DESC']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+          Expanded(
+            child: Center(
+              child: GridView.count(
+                crossAxisCount: 2,
+                padding: const EdgeInsets.all(16.0),
+                childAspectRatio: 8.0 / 9.0,
+                children: _buildGridCards(context),
+              ),
+            ),
+          ),
+        ],
+      ),
+      resizeToAvoidBottomInset: false,
+    );
+  }
 
   List<Card> _buildGridCards(BuildContext context) {
     List<Product> products = ProductsRepository.loadProducts(Category.all);
@@ -37,9 +129,7 @@ class HomePage extends StatelessWidget {
     return products.map((product) {
       return Card(
         clipBehavior: Clip.antiAlias,
-        // TODO: Adjust card heights (103)
         child: Column(
-          // TODO: Center items on the card (103)
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             AspectRatio(
@@ -53,21 +143,55 @@ class HomePage extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
-                child: Column(
-                  // TODO: Align labels to the bottom and center (103)
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  // TODO: Change innermost Column (103)
+                child: Row(
                   children: <Widget>[
-                    // TODO: Handle overflowing labels (103)
-                    Text(
-                      product.name,
-                      style: theme.textTheme.headline6,
-                      maxLines: 1,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            product.name,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            formatter.format(product.price),
+                            style: const TextStyle(
+                              fontSize: 8,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      formatter.format(product.price),
-                      style: theme.textTheme.subtitle2,
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: TextButton(
+                        onPressed: () {
+                          print("More button");
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const DetailPage(),
+                            ),
+                          );
+
+                        },
+                        child: const Text(
+                          'more',
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          // padding: const EdgeInsets.all(0.0),
+                          minimumSize: const Size(5, 3),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -79,53 +203,4 @@ class HomePage extends StatelessWidget {
     }).toList();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: Return an AsymmetricView (104)
-    // TODO: Pass Category variable to AsymmetricView (104)
-
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.menu,
-            semanticLabel: 'menu',
-          ),
-          onPressed: () {
-            print('Menu button');
-          },
-        ),
-        title: const Text('SHRINE'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.search,
-              semanticLabel: 'search',
-            ),
-            onPressed: () {
-              print('Search button');
-            },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.tune,
-              semanticLabel: 'filter',
-            ),
-            onPressed: () {
-              print('Filter button');
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: GridView.count(
-          crossAxisCount: 2,
-          padding: const EdgeInsets.all(16.0),
-          childAspectRatio: 8.0 / 9.0,
-          children: _buildGridCards(context),
-        ),
-      ),
-      resizeToAvoidBottomInset: false,
-    );
-  }
 }

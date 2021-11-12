@@ -13,7 +13,23 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'app.dart';
+import 'appstate.dart';
 
-void main() => runApp(const ShrineApp());
+// void main() => runApp(const ShrineApp());
+
+// void main(){
+//   WidgetsFlutterBinding.ensureInitialized();
+//   runApp(const ShrineApp());
+// }
+
+void main(){
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ApplicationState(),
+      builder: (context, _) => const ShrineApp(),
+    ),
+  );
+}
