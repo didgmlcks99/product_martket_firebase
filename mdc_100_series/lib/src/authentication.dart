@@ -15,7 +15,7 @@ class Authentication extends StatelessWidget {
     this.email,
     required this.startLoginFlow,
     required this.signInAnonymously,
-    required this.signWithGoogle,
+    required this.signInWithGoogle,
     required this.signOut,
   });
 
@@ -25,9 +25,7 @@ class Authentication extends StatelessWidget {
   final void Function(
       void Function(Exception e) error
       ) signInAnonymously;
-  final void Function(
-      void Function(Exception e) error
-      ) signWithGoogle;
+  final void Function(BuildContext context) signInWithGoogle;
   final void Function() signOut;
 
   @override
@@ -37,19 +35,19 @@ class Authentication extends StatelessWidget {
         ElevatedButton(
           child: const Text('Google'),
           style: ElevatedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 50),
             primary : Colors.red,
           ),
           onPressed: () async {
             startLoginFlow();
-            signWithGoogle(
-                    (e) => _showErrorDialog(context, 'Failed to sign in', e)
-            );
+            signInWithGoogle(context);
           },
         ),
-        const SizedBox(height: 12.0),
+        const SizedBox(height: 18.0),
         ElevatedButton(
           child: const Text('Guest'),
           style: ElevatedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 50),
             primary : Colors.grey,
           ),
           onPressed: () async {
@@ -60,15 +58,15 @@ class Authentication extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        ElevatedButton(
-          child: const Text('logout'),
-          style: ElevatedButton.styleFrom(
-            primary : Colors.pink,
-          ),
-          onPressed: () async {
-            signOut();
-          },
-        ),
+        // ElevatedButton(
+        //   child: const Text('logout'),
+        //   style: ElevatedButton.styleFrom(
+        //     primary : Colors.pink,
+        //   ),
+        //   onPressed: () async {
+        //     signOut();
+        //   },
+        // ),
       ],
     );
   }

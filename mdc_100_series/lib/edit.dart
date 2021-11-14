@@ -1,27 +1,42 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'appstate.dart';
+import 'model/product.dart';
 
-class AddPage extends StatefulWidget{
-  const AddPage({Key? key}) : super(key: key);
+class EditPage extends StatefulWidget{
+  const EditPage({Key? key, required this.name, required this.price, required this.desc, required this.product}) : super(key: key);
+
+  final Product product;
+  final String name;
+  final String price;
+  final String desc;
 
   @override
-  State<AddPage> createState() => _AddPageState();
+  State<EditPage> createState() => _EditPageState();
 }
 
-class _AddPageState extends State<AddPage> {
+class _EditPageState extends State<EditPage>{
   final _productName = TextEditingController();
   final _price = TextEditingController();
   final _description = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>(debugLabel: '_AddPageState');
+  final _formKey = GlobalKey<FormState>(debugLabel: '_EditPageState');
 
+  @override
+  void initState(){
+    super.initState();
+    _productName.text = widget.name;
+    _price.text = widget.price;
+    _description.text = widget.desc;
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add"),
+        title: const Text("Edit"),
         actions: <Widget>[
           Consumer<ApplicationState>(
             builder: (context, appState, _) => TextButton(
@@ -30,15 +45,14 @@ class _AddPageState extends State<AddPage> {
               ),
               onPressed: () async{
                 if(_formKey.currentState!.validate()){
-                  await appState.addProductToMarket(
+                  await appState.updateProduct(
+                      widget.product.docId,
                       _productName.text,
                       int.parse(_price.text),
                       _description.text);
-                  _productName.clear();
-                  _price.clear();
-                  _description.clear();
                 }
                 print('Save button');
+                Navigator.pop(context);
               },
               child: const Text(
                 'Save',
@@ -107,3 +121,4 @@ class _AddPageState extends State<AddPage> {
   }
 
 }
+

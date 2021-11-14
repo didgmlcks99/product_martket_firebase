@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'appstate.dart';
 
 class ProfilePage extends StatefulWidget{
   const ProfilePage({Key? key}) : super(key: key);
@@ -31,15 +34,84 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       backgroundColor: Colors.black,
-      body: const Center(
-        child: Text(
-          'hello',
-          style: TextStyle(
-            color: Colors.white,
-          )
+      body: Center(
+        child: Consumer<ApplicationState>(
+          builder: (context, appState, _) => Column(
+            children: <Widget>[
+              proPic(appState.photoURL),
+              const SizedBox(height: 60.0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      appState.uid.toString(),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Divider(
+                      thickness: 1,
+                      height: 40.0,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      ifEmail(appState.email),
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 60.0),
+                    const Text(
+                      "HeeChan Yang",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    const Text(
+                      "I Promise to take the test honestly before GOD",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      )
+      ),
     );
   }
 
+  proPic(String? photoURL) {
+    if(photoURL != null){
+      return Image.network(
+        photoURL,
+        width: 200,
+        height: 200,
+        fit: BoxFit.fill,
+      );
+    }else{
+      return Image.network(
+        'https://handong.edu/site/handong/res/img/logo.png',
+        width: 200,
+        height: 200,
+        fit: BoxFit.fill,
+      );
+    }
+  }
+
+  ifEmail(String? email) {
+    if(email != null){
+      return email;
+    }else{
+      return "Anonymous";
+    }
+  }
+
 }
+

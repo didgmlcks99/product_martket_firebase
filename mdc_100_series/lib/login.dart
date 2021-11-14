@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           children: <Widget>[
-            const SizedBox(height: 80.0),
+            const SizedBox(height: 200.0),
             Column(
               children: <Widget>[
                 Image.asset('assets/diamond.png'),
@@ -49,22 +49,22 @@ class _LoginPageState extends State<LoginPage> {
                 email: appState.email,
                 loginState: appState.loginState,
                 startLoginFlow: appState.startLoginFlow,
-                signWithGoogle: appState.signWithGoogle,
+                signInWithGoogle: appState.signInWithGoogle,
                 signInAnonymously: appState.signInAnonymously,
                 signOut: appState.signOut,
               )
             ),
             const SizedBox(height: 12.0),
-            ButtonBar(
-              children: <Widget>[
-                ElevatedButton(
-                  child: const Text('NEXT'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
+            // ButtonBar(
+            //   children: <Widget>[
+            //     ElevatedButton(
+            //       child: const Text('NEXT'),
+            //       onPressed: () {
+            //         Navigator.pop(context);
+            //       },
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

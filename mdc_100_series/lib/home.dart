@@ -14,11 +14,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shrine/profile.dart';
 
 import 'add.dart';
+import 'appstate.dart';
 import 'detail.dart';
-import 'model/products_repository.dart';
 import 'model/product.dart';
 
 class HomePage extends StatefulWidget {
@@ -69,43 +70,46 @@ class _HomePageState extends State<HomePage> {
                   builder: (context) => const AddPage(),
                 ),
               );
-
             },
           ),
         ],
       ),
       body: Column(
         children: <Widget>[
-          DropdownButton<String>(
-            value: dropdownValue,
-            icon: const Icon(Icons.arrow_downward),
-            iconSize: 20,
-            elevation: 16,
-            style: const TextStyle(color: Colors.black),
-            underline: Container(
-              height: 1,
-              color: Colors.grey,
+          Consumer<ApplicationState>(
+            builder: (context, appState, _) => DropdownButton<String>(
+              value: dropdownValue,
+              icon: const Icon(Icons.arrow_downward),
+              iconSize: 20,
+              elevation: 16,
+              style: const TextStyle(color: Colors.black),
+              underline: Container(
+                height: 1,
+                color: Colors.grey,
+              ),
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropdownValue = newValue!;
+                });
+              },
+              items: <String>['ASC', 'DESC']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
-            onChanged: (String? newValue) {
-              setState(() {
-                dropdownValue = newValue!;
-              });
-            },
-            items: <String>['ASC', 'DESC']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
           ),
           Expanded(
             child: Center(
-              child: GridView.count(
-                crossAxisCount: 2,
-                padding: const EdgeInsets.all(16.0),
-                childAspectRatio: 8.0 / 9.0,
-                children: _buildGridCards(context),
+              child: Consumer<ApplicationState>(
+                builder: (context, appState, _) => GridView.count(
+                  crossAxisCount: 2,
+                  padding: const EdgeInsets.all(16.0),
+                  childAspectRatio: 8.0 / 9.0,
+                  children: _buildGridCards(context, appState, dropdownValue),
+                ),
               ),
             ),
           ),
@@ -115,16 +119,18 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  List<Card> _buildGridCards(BuildContext context) {
-    List<Product> products = ProductsRepository.loadProducts(Category.all);
+  List<Card> _buildGridCards(BuildContext context, ApplicationState appState, String dropdownValue) {
+    List<Product> products = appState.products;
 
     if (products.isEmpty) {
       return const <Card>[];
     }
 
-    final ThemeData theme = Theme.of(context);
-    final NumberFormat formatter = NumberFormat.simpleCurrency(
-        locale: Localizations.localeOf(context).toString());
+    if(dropdownValue == "DESC"){
+      products = products.reversed.toList();
+    }else{
+      products = appState.products;
+    }
 
     return products.map((product) {
       return Card(
@@ -134,10 +140,9 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             AspectRatio(
               aspectRatio: 18 / 11,
-              child: Image.asset(
-                product.assetName,
-                package: product.assetPackage,
-                fit: BoxFit.fitWidth,
+              child: Image.network(
+                'https://handong.edu/site/handong/res/img/logo.png',
+                fit: BoxFit.fill,
               ),
             ),
             Expanded(
@@ -150,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            product.name,
+                            product.productName,
                             style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -159,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            formatter.format(product.price),
+                            product.productPrice,
                             style: const TextStyle(
                               fontSize: 8,
                             ),
@@ -176,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const DetailPage(),
+                              builder: (context) => DetailPage(product: product,),
                             ),
                           );
 

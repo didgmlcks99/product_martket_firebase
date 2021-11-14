@@ -35,8 +35,8 @@ class ProductCard extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     final imageWidget = Image.asset(
-      product.assetName,
-      package: product.assetPackage,
+      'https://handong.edu/site/handong/res/img/logo.png',
+      // package: product.assetPackage,
       fit: BoxFit.cover,
     );
 
@@ -56,7 +56,7 @@ class ProductCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                product.name,
+                product.productName,
                 style: theme.textTheme.headline6,
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
@@ -64,7 +64,7 @@ class ProductCard extends StatelessWidget {
               ),
               const SizedBox(height: 4.0),
               Text(
-                formatter.format(product.price),
+                formatter.format(product.productPrice),
                 style: theme.textTheme.subtitle2,
               ),
             ],

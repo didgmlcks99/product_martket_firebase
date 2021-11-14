@@ -12,26 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-enum Category { all, accessories, clothing, home, }
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Product {
   const Product({
-    required this.category,
-    required this.id,
-    required this.isFeatured,
-    required this.name,
-    required this.price,
+    required this.picUrl,
+    required this.ownerId,
+    required this.ownerName,
+    required this.productCreated,
+    required this.productModified,
+    required this.docId,
+    required this.productName,
+    required this.productPrice,
+    required this.productDesc,
+    required this.productLikes,
   });
 
-  final Category category;
-  final int id;
-  final bool isFeatured;
-  final String name;
-  final int price;
+  final String picUrl;
+  final String ownerId;
+  final String ownerName;
+  final Timestamp? productCreated;
+  final Timestamp? productModified;
+  final String docId;
+  final String productName;
+  final String productPrice;
+  final String productDesc;
+  final String productLikes;
 
-  String get assetName => '$id-0.jpg';
-  String get assetPackage => 'shrine_images';
+  // String get assetName => '$id-0.jpg';
+  // String get assetPackage => 'shrine_images';
 
-  @override
-  String toString() => "$name (id=$id)";
+  // @override
+  // String toString() => "$name (id=$id)";
 }
